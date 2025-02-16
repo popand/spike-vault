@@ -4,7 +4,6 @@ import logging
 from datetime import datetime
 from temporalio import activity
 import openai
-from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from ..config import settings
 
@@ -53,12 +52,9 @@ async def analyze_team_data(team_data: Dict[str, Any]) -> Dict[str, Any]:
 async def store_in_sheets(analyzed_data: Dict[str, Any]) -> str:
     """Store the analyzed team data in Google Sheets."""
     try:
-        creds = Credentials.from_authorized_user_info(
-            json.loads(settings.GOOGLE_CREDENTIALS),
-            ['https://www.googleapis.com/auth/spreadsheets']
-        )
-
-        service = build('sheets', 'v4', credentials=creds)
+        # Build the Sheets API service using API key
+        service = build('sheets', 'v4', 
+                       developerKey=settings.GOOGLE_SHEETS_API_KEY.get_secret_value())
         spreadsheet = service.spreadsheets()
 
         # Prepare the data

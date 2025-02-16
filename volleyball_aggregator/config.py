@@ -1,7 +1,8 @@
 import os
 from pathlib import Path
 from typing import Optional
-from pydantic import BaseSettings, SecretStr
+from pydantic import SecretStr
+from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 
 # Load environment variables from .env file if it exists
@@ -28,7 +29,7 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: SecretStr
     
     # Google Sheets Configuration
-    GOOGLE_CREDENTIALS: SecretStr
+    GOOGLE_SHEETS_API_KEY: SecretStr
     GOOGLE_SHEET_ID: str
     
     @property

@@ -29,6 +29,7 @@ class Team(BaseModel):
     last_updated: datetime = Field(default_factory=datetime.utcnow)
 
     class Config:
+        arbitrary_types_allowed = True
         json_schema_extra = {
             "example": {
                 "school_name": "Example University",
