@@ -1,4 +1,4 @@
-# Volleyball Teams Data Aggregator
+# Volleyball Teams Data Aggregator (Volleyball Vault)
 
 A robust data aggregation system that collects and processes information about volleyball teams from NCAA Division I, Division III, and Canadian universities. The system uses Temporal workflows for reliable task orchestration and features concurrent scraping capabilities.
 
