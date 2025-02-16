@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from typing import Optional
-from pydantic import BaseSettings
+from pydantic import BaseSettings, SecretStr
 from dotenv import load_dotenv
 
 # Load environment variables from .env file if it exists
@@ -23,6 +23,13 @@ class Settings(BaseSettings):
     
     # Storage Configuration
     OUTPUT_DIR: str = "data"
+    
+    # OpenAI Configuration
+    OPENAI_API_KEY: SecretStr
+    
+    # Google Sheets Configuration
+    GOOGLE_CREDENTIALS: SecretStr
+    GOOGLE_SHEET_ID: str
     
     @property
     def output_path(self) -> Path:

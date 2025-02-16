@@ -46,15 +46,51 @@ class DataAggregatorWorkflow:
             except Exception as e:
                 workflow.logger.error(f"Error in child workflow for {source['name']}: {str(e)}")
 
-        # Store results
-        if results:
+        # Process each team through AI analysis and store in sheets
+        analyzed_results = []
+        for team_data in results:
+            try:
+                # AI Analysis
+                analysis = await workflow.execute_activity(
+                    "analyze_team_data",
+                    team_data,
+                    start_to_close_timeout=timedelta(minutes=5),
+                    retry_policy=RetryPolicy(
+                        initial_interval=timedelta(seconds=1),
+                        maximum_interval=timedelta(minutes=5),
+                        maximum_attempts=3
+                    )
+                )
+                
+                # Store in Google Sheets
+                sheet_result = await workflow.execute_activity(
+                    "store_in_sheets",
+                    analysis,
+                    start_to_close_timeout=timedelta(minutes=5),
+                    retry_policy=RetryPolicy(
+                        initial_interval=timedelta(seconds=1),
+                        maximum_interval=timedelta(minutes=5),
+                        maximum_attempts=3
+                    )
+                )
+                
+                analyzed_results.append({
+                    "team_data": team_data,
+                    "analysis": analysis,
+                    "storage_result": sheet_result
+                })
+            except Exception as e:
+                workflow.logger.error(f"Error processing team {team_data.get('school_name')}: {str(e)}")
+
+        # Store final results
+        if analyzed_results:
             await workflow.execute_activity(
                 "store_results",
-                results,
+                analyzed_results,
                 start_to_close_timeout=timedelta(minutes=5)
             )
 
-        return results
+        return analyzed_results
 
 @workflow.defn
 class ScrapeSourceWorkflow:
